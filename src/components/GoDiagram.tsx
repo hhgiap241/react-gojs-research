@@ -28,7 +28,7 @@ function GoDiagram() {
               {key: 'A2', text: 'A2', color: 'lightgreen', loc: '300 150', category: 'Task'}
             ]}
             linkDataArray={[
-              {key: -1, from: 'B2', to: 'B1'},
+              {key: -1, from: 'B2', to: 'B1', text: 'hihi'},
               {key: -2, from: 'A1', to: 'B2'},
               {key: -3, from: 'A2', to: 'B2'}
             ]}

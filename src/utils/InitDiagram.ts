@@ -90,6 +90,14 @@ class InitDiagram {
             )
         ));
 
+    diagram.linkTemplate =
+        $(go.Link,
+            $(go.Shape),                           // this is the link shape (the line)
+            $(go.Shape, { toArrow: "Standard" }),  // this is an arrowhead
+            $(go.TextBlock,                        // this is a Link label
+                new go.Binding("text", "text"))
+        );
+
     return diagram;
   }
 }
