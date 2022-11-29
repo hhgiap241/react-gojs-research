@@ -1,4 +1,7 @@
 import {ObjectData} from "gojs";
+import data from '../jsonSrc/graph3.json';
+import data2 from '../jsonSrc/data.json';
+import data3 from '../jsonSrc/original_data.json';
 
 let x: number = 0;
 let y: number = 0;
@@ -38,6 +41,7 @@ class InitData {
   constructor() {
     this.nodeDataArray = [];
     this.linkDataArray = [];
+    this.init(data3);
   }
   handleLogicalOperatorElements(elements: object[], parentTask: any) {
     console.log(elements);
@@ -45,7 +49,8 @@ class InitData {
       if (element.type === 'Task') {
         addTask(this.nodeDataArray, element, {
           loc: '0 0',
-          color: 'lightgreen',
+          // if the state is ok => lightgreen, pending => yellow, cancelled => red
+          color: element.state === 'ok' ? 'lightgreen' : element.state === 'cancelled' ? 'red' : 'yellow',
           category: 'Task',
         });
         const link = {
@@ -54,16 +59,6 @@ class InitData {
         }
         addLink(this.linkDataArray, link);
       } else {
-        // addTask(this.nodeDataArray, {
-        //   id: element.id,
-        //   operator: element.operator
-        // }, {
-        //   loc: '0 0',
-        //   color: 'pink',
-        //   category: 'LogicalOperator',
-        // });
-        // console.log(element.elements);
-        // this.handleLogicalOperatorElements(element.elements);
         this.handleLogicalOperator(element, parentTask);
       }
     });
@@ -99,31 +94,6 @@ class InitData {
       if (task.dependencies) {
         const parentTask = task;
         this.handleLogicalOperator(task.dependencies, parentTask);
-        // task.dependencies.elements.forEach((element: any) => {
-        //   if (element.type === 'Task') {
-        //     addTask(this.nodeDataArray, element, {
-        //       loc: '0 0',
-        //       color: 'lightgreen',
-        //       category: 'Task',
-        //     });
-        //   } else {
-        //     addTask(this.nodeDataArray, {
-        //       id: element.id,
-        //       operator: element.operator
-        //     }, {
-        //       loc: '0 0',
-        //       color: 'pink',
-        //       category: 'LogicalOperator',
-        //     });
-        //     element.elements.forEach((subElement: any) => {
-        //       addTask(this.nodeDataArray, subElement, {
-        //         loc: '0 0',
-        //         color: 'lightgreen',
-        //         category: 'Task',
-        //       });
-        //     });
-        //   }
-        // });
       }
     })
   }

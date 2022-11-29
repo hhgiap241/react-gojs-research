@@ -34,14 +34,14 @@
             {
               "type": "Task",
               "id": "A5",
-              "state": "ok"
+              "state": "pending"
             }
           ]
         },
         {
           "type": "Task",
           "id": "A2",
-          "state": "ok"
+          "state": "cancelled"
         }
       ]
     }
