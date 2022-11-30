@@ -49,7 +49,9 @@ class InitDiagram {
     const diagram =
         $(go.Diagram,
             {
-              'undoManager.isEnabled': true,  // must be set to allow for model change listening
+              // enable Ctrl-Z to undo and Ctrl-Y to redo
+              // must be set to allow for model change listening
+              'undoManager.isEnabled': true,
               // 'undoManager.maxHistoryLength': 0,  // uncomment disable undo/redo functionality
               layout: $(go.TreeLayout, {comparer: go.LayoutVertex.smartComparer}),
               'clickCreatingTool.archetypeNodeData': {text: 'new node', color: 'lightblue'},
@@ -73,17 +75,15 @@ class InitDiagram {
             )
         ));
     diagram.nodeTemplateMap.add("LogicalOperator",
-        $(go.Node, nodeStyle(),
-            {
-              movable: true,
-              layerName: "Foreground",
-              alignmentFocus: go.Spot.None
-            },
-            $(go.Shape, shapeStyle(),
+        $(go.Node, 'Auto',
+            new go.Binding('location', 'loc', go.Point.parse).makeTwoWay(go.Point.stringify),
+            $(go.Shape, 'Ellipse',
                 {
                   figure: "Ellipse",
                   desiredSize: new go.Size(30, 30)
-                }),
+                },
+                // Shape.fill is bound to Node.data.color
+                new go.Binding('fill', 'color')),
             $(go.TextBlock,
                 {margin: 8, editable: true},  // some room around the text
                 new go.Binding('text').makeTwoWay()

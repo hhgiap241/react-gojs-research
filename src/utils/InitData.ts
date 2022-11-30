@@ -41,7 +41,7 @@ class InitData {
   constructor() {
     this.nodeDataArray = [];
     this.linkDataArray = [];
-    this.init(data2);
+    this.init(data3);
   }
   handleLogicalOperatorElements(elements: object[], parentTask: any) {
     console.log(elements);

@@ -9,7 +9,6 @@ import Graph from "./components/Graph";
 const App = (): JSX.Element => {
   return (
     <div>
-      <GoDiagram />
       <Graph />
     </div>
   );
