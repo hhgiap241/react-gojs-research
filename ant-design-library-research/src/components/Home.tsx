@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {FloatButton, Layout, Menu} from "antd";
+import {FloatButton, Layout, Menu, Pagination, PaginationProps} from "antd";
 import Sider from "antd/es/layout/Sider";
 import './Home.css';
 
@@ -13,12 +13,16 @@ import {
 import {Content, Footer, Header} from "antd/es/layout/layout";
 import Todo from "./Todo";
 
+const onPageChange: PaginationProps['onChange'] = (pageNumber) => {
+  console.log('Page: ', pageNumber);
+};
+
 const Home = (): JSX.Element => {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
       <>
-        <Layout  style={{height: "inherit"}}>
+        <Layout style={{height: "inherit"}}>
           <Sider trigger={null} collapsible collapsed={collapsed}
           >
             <div className="logo"></div>
@@ -42,6 +46,13 @@ const Home = (): JSX.Element => {
                     key: '3',
                     icon: <UploadOutlined/>,
                     label: 'nav 3',
+                    children: [
+                      {
+                        key: '3.1',
+                        label: 'nav 3.1',
+                        icon: <QuestionCircleOutlined/>,
+                      }
+                    ]
                   },
                 ]}
             />
@@ -61,9 +72,11 @@ const Home = (): JSX.Element => {
                   minHeight: 280,
                 }}
             >
-              <Todo />
+              <Todo/>
+              <Pagination total={10} onChange={onPageChange} pageSize={1} />
             </Content>
-            <Footer style={{textAlign: 'center', padding: '0px'}}>Ant Design ©2018 Created by Ant UED</Footer>
+            <Footer style={{textAlign: 'center', padding: '0px'}}>Ant Design ©2018 Created by Ant
+              UED</Footer>
           </Layout>
         </Layout>
 
