@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {FloatButton, Layout, Menu} from "antd";
 import Sider from "antd/es/layout/Sider";
 import './Home.css';
+
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined, QuestionCircleOutlined,
@@ -9,7 +10,7 @@ import {
   UserOutlined,
   VideoCameraOutlined
 } from "@ant-design/icons";
-import {Content, Header} from "antd/es/layout/layout";
+import {Content, Footer, Header} from "antd/es/layout/layout";
 import Todo from "./Todo";
 
 const Home = (): JSX.Element => {
@@ -18,7 +19,8 @@ const Home = (): JSX.Element => {
   return (
       <>
         <Layout  style={{height: "inherit"}}>
-          <Sider trigger={null} collapsible collapsed={collapsed}>
+          <Sider trigger={null} collapsible collapsed={collapsed}
+          >
             <div className="logo"></div>
             <Menu
                 theme="dark"
@@ -59,8 +61,9 @@ const Home = (): JSX.Element => {
                   minHeight: 280,
                 }}
             >
-              <Todo/>
+              <Todo />
             </Content>
+            <Footer style={{textAlign: 'center', padding: '0px'}}>Ant Design ©2018 Created by Ant UED</Footer>
           </Layout>
         </Layout>
 
