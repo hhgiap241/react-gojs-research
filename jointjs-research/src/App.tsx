@@ -5,11 +5,12 @@ import HelloWorld from "./components/HelloWorld";
 import ReactDiagram from "./components/ReactDiagram";
 import GoDiagram from "./components/GoDiagram";
 import Graph from "./components/Graph";
+import {StateDiagram} from "./components/StateDiagram";
 
 const App = (): JSX.Element => {
   return (
     <div>
-      <Graph />
+      <StateDiagram />
     </div>
   );
 }
