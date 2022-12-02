@@ -13,7 +13,7 @@ function checkIfTaskExists(nodeDataArray: ObjectData[], task: any): boolean {
 
 function addLink(linkDataArray: ObjectData[], link: any): void {
   linkDataArray.push({
-    // key: key--,
+    key: key--,
     from: link.from,
     to: link.to,
     fromPort: "Out",

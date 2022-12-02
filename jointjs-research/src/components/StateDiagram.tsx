@@ -62,14 +62,46 @@ export class StateDiagram extends React.Component<{}, AppState> {
    * @param obj a JSON-formatted string
    */
   public handleModelChange(obj: go.IncrementalData) {
-    const insertedNodeKeys = obj.insertedNodeKeys
+    const insertedNodeKeys = obj.insertedNodeKeys;
     const modifiedNodeData = obj.modifiedNodeData;
     const removedNodeKeys = obj.removedNodeKeys;
     const insertedLinkKeys = obj.insertedLinkKeys;
     const modifiedLinkData = obj.modifiedLinkData;
     const removedLinkKeys = obj.removedLinkKeys;
     const modifiedModelData = obj.modelData;
-    console.log(obj);
+
+    console.log('insertedNodeKeys', insertedNodeKeys);
+    console.log('modifiedNodeData', modifiedNodeData);
+    console.log('removedNodeKeys', removedNodeKeys);
+    console.log('insertedLinkKeys', insertedLinkKeys);
+    console.log('modifiedLinkData', modifiedLinkData);
+    console.log('removedLinkKeys', removedLinkKeys);
+    console.log('modifiedModelData', modifiedModelData);
+    console.log('obj', obj);
+
+    // we will update the node data and node link here
+    console.log(this.state.nodeDataArray);
+    console.log(this.state.linkDataArray);
+    if (modifiedNodeData) {
+      const newNode = modifiedNodeData[modifiedNodeData.length - 1];
+      const nodeDataArray = this.state.nodeDataArray;
+      // check if newNode is already in the nodeDataArray
+      const isExists = nodeDataArray.find((node) => node.key === newNode.key);
+      if (isExists === undefined) {
+        nodeDataArray.push(newNode);
+      }
+      this.setState({ nodeDataArray: nodeDataArray });
+    }
+    if (modifiedLinkData) {
+      const newLink = modifiedLinkData[modifiedLinkData.length - 1];
+      const linkDataArray = this.state.linkDataArray;
+      // check if newLink is already in the linkDataArray
+      const isExists = linkDataArray.find((link) => link.key === newLink.key);
+      if (isExists === undefined) {
+        linkDataArray.push(newLink);
+      }
+      this.setState({ linkDataArray: linkDataArray });
+    }
 
     // see gojs-react-basic for an example model change handler
     // when setting state, be sure to set skipsDiagramUpdate: true since GoJS already has this update

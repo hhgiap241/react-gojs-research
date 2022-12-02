@@ -178,6 +178,7 @@ export class DiagramWrapper extends React.Component<WrapperProps, {}> {
             $(go.Shape),
             $(go.Shape, { toArrow: 'Standard' })
         );
+    diagram.toolManager.clickCreatingTool.archetypeNodeData = { text: 'new node', category: 'Task', color: 'lightgreen' };
     return diagram;
   }
 
