@@ -67,6 +67,8 @@ export class DiagramWrapper extends React.Component<WrapperProps, {}> {
               model: new go.GraphLinksModel(
                   {
                     linkKeyProperty: 'key',  // IMPORTANT! must be defined for merges and data sync when using GraphLinksModel
+                    linkFromPortIdProperty: "fromPort",  // required information:
+                    linkToPortIdProperty: "toPort",      // identifies data property names
                     // positive keys for nodes
                     makeUniqueKeyFunction: (m: go.Model, data: any) => {
                       let k = data.key || 1;
@@ -82,43 +84,51 @@ export class DiagramWrapper extends React.Component<WrapperProps, {}> {
                       return k;
                     }
                   }),
-              layout: $(go.TreeLayout, {comparer: go.LayoutVertex.smartComparer}),
+              // layout: $(go.TreeLayout, {comparer: go.LayoutVertex.smartComparer}),
+              layout: $(go.LayeredDigraphLayout, { columnSpacing: 10 })
             });
 
-    // define a simple Node template
-    diagram.nodeTemplate =
-        $(go.Node, 'Auto',  // the Shape will go around the TextBlock
-            new go.Binding('location', 'loc', go.Point.parse).makeTwoWay(go.Point.stringify),
-            $(go.Shape, 'RoundedRectangle',
-                {
-                  name: 'SHAPE', fill: 'white', strokeWidth: 0,
-                  // set the port properties:
-                  portId: '', fromLinkable: true, toLinkable: true, cursor: 'pointer'
-                },
-                // Shape.fill is bound to Node.data.color
-                new go.Binding('fill', 'color')),
-            $(go.TextBlock,
-                { margin: 8, editable: true, font: '400 .875rem Roboto, sans-serif' },  // some room around the text
-                new go.Binding('text').makeTwoWay()
-            )
-        );
 
     // define a simple Node template
     diagram.nodeTemplateMap.add("Task",
         $(go.Node, 'Auto',  // the Shape will go around the TextBlock
-            new go.Binding('location', 'loc', go.Point.parse).makeTwoWay(go.Point.stringify),
+            // new go.Binding('location', 'loc', go.Point.parse).makeTwoWay(go.Point.stringify),
             $(go.Shape, 'RoundedRectangle',
                 {
                   name: 'SHAPE', fill: 'white', strokeWidth: 0,
                   // set the port properties:
-                  portId: '', fromLinkable: true, toLinkable: true, cursor: 'pointer'
+
                 },
                 // Shape.fill is bound to Node.data.color
                 new go.Binding('fill', 'color')),
-            $(go.TextBlock,
-                { margin: 8, editable: true, font: '400 .875rem Roboto, sans-serif' },  // some room around the text
-                new go.Binding('text').makeTwoWay()
+            $(go.Panel, "Table",
+                $(go.RowColumnDefinition,
+                    { column: 0, alignment: go.Spot.Left}),
+                $(go.RowColumnDefinition,
+                    { column: 2, alignment: go.Spot.Right }),
+                $(go.TextBlock,
+                    { margin: new go.Margin(4, 2), column: 0, row: 0, columnSpan: 3, editable: true, font: '400 .875rem Roboto, sans-serif', alignment: go.Spot.Center },  // some room around the text
+                    new go.Binding('text').makeTwoWay()
+                ),
+                $(go.Panel, "Horizontal",
+                    { column: 0, row: 1 },
+                    $(go.Shape,  // the "A" port
+                        { width: 6, height: 6, portId: "In", toSpot: go.Spot.Left,
+                          toLinkable: true, toMaxLinks: 1 }),  // allow user-drawn links to here
+                    $(go.TextBlock, "In")  // "A" port label
+                ),
+                $(go.Panel, "Horizontal",
+                    { column: 2, row: 1, rowSpan: 2 },
+                    $(go.TextBlock, "Out"),  // "Out" port label
+                    $(go.Shape,  // the "Out" port
+                        { width: 6, height: 6, portId: "Out", fromSpot: go.Spot.Right,
+                          fromLinkable: true })  // allow user-drawn links from here
+                )
             )
+            // $(go.TextBlock,
+            //     { margin: 8, editable: true, font: '400 .875rem Roboto, sans-serif' },  // some room around the text
+            //     new go.Binding('text').makeTwoWay()
+            // )
         ));
     diagram.nodeTemplateMap.add("LogicalOperator",
         $(go.Node, 'Auto',
@@ -130,6 +140,30 @@ export class DiagramWrapper extends React.Component<WrapperProps, {}> {
                 },
                 // Shape.fill is bound to Node.data.color
                 new go.Binding('fill', 'color')),
+            // $(go.Panel, "Table",
+            //     $(go.RowColumnDefinition,
+            //         { column: 0, alignment: go.Spot.Left}),
+            //     $(go.RowColumnDefinition,
+            //         { column: 2, alignment: go.Spot.Right }),
+            //     $(go.TextBlock,
+            //         { margin: new go.Margin(4, 2), column: 0, row: 0, columnSpan: 3, editable: true, font: '400 .875rem Roboto, sans-serif', alignment: go.Spot.Center },  // some room around the text
+            //         new go.Binding('text').makeTwoWay()
+            //     ),
+            //     $(go.Panel, "Horizontal",
+            //         { column: 0, row: 1 },
+            //         $(go.Shape,  // the "A" port
+            //             { width: 6, height: 6, portId: "In", toSpot: go.Spot.LeftCenter,
+            //               toLinkable: true, toMaxLinks: 1 }),  // allow user-drawn links to here
+            //         // $(go.TextBlock, "In")  // "A" port label
+            //     ),
+            //     $(go.Panel, "Horizontal",
+            //         { column: 2, row: 1, rowSpan: 2 },
+            //         // $(go.TextBlock, "Out"),  // "Out" port label
+            //         $(go.Shape,  // the "Out" port
+            //             { width: 6, height: 6, portId: "Out", fromSpot: go.Spot.RightCenter,
+            //               fromLinkable: true })  // allow user-drawn links from here
+            //     )
+            // )
             $(go.TextBlock,
                 { margin: 8, editable: true, font: '400 .875rem Roboto, sans-serif' },  // some room around the text
                 new go.Binding('text').makeTwoWay()
@@ -144,7 +178,6 @@ export class DiagramWrapper extends React.Component<WrapperProps, {}> {
             $(go.Shape),
             $(go.Shape, { toArrow: 'Standard' })
         );
-
     return diagram;
   }
 

@@ -62,14 +62,13 @@ export class StateDiagram extends React.Component<{}, AppState> {
    * @param obj a JSON-formatted string
    */
   public handleModelChange(obj: go.IncrementalData) {
-    const insertedNodeKeys = obj.insertedNodeKeys;
+    const insertedNodeKeys = obj.insertedNodeKeys
     const modifiedNodeData = obj.modifiedNodeData;
     const removedNodeKeys = obj.removedNodeKeys;
     const insertedLinkKeys = obj.insertedLinkKeys;
     const modifiedLinkData = obj.modifiedLinkData;
     const removedLinkKeys = obj.removedLinkKeys;
     const modifiedModelData = obj.modelData;
-
     console.log(obj);
 
     // see gojs-react-basic for an example model change handler
@@ -86,12 +85,6 @@ export class StateDiagram extends React.Component<{}, AppState> {
     this.setState({ modelData: { canRelink: value }, skipsDiagramUpdate: false });
   }
   public handleResetDiagramBtn(e: any) {
-    this.setState({
-      nodeDataArray: InitData.getNodeDataArray(),
-      linkDataArray: InitData.getLinkDataArray(),
-      // skipsDiagramUpdate: false
-    });
-    console.log(this.state.nodeDataArray);
     this.setState({ modelData: { canRelink: true }, skipsDiagramUpdate: false });
   }
   public render() {
