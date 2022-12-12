@@ -2,6 +2,8 @@ import React from 'react';
 import * as go from 'gojs';
 import {DiagramWrapper} from "./DiagramWrapper";
 import InitData from "../utils/InitData";
+import {Model} from "gojs";
+import DiagramHelper from "../utils/DiagramHelper";
 
 interface AppState {
   // ...
@@ -30,6 +32,7 @@ export class StateDiagram extends React.Component<{}, AppState> {
     this.handleModelChange = this.handleModelChange.bind(this);
     this.handleRelinkChange = this.handleRelinkChange.bind(this);
     this.handleResetDiagramBtn = this.handleResetDiagramBtn.bind(this);
+    this.saveToJSON = this.saveToJSON.bind(this);
   }
 
   /**
@@ -70,13 +73,6 @@ export class StateDiagram extends React.Component<{}, AppState> {
     const removedLinkKeys = obj.removedLinkKeys;
     const modifiedModelData = obj.modelData;
 
-    console.log('insertedNodeKeys', insertedNodeKeys);
-    console.log('modifiedNodeData', modifiedNodeData);
-    console.log('removedNodeKeys', removedNodeKeys);
-    console.log('insertedLinkKeys', insertedLinkKeys);
-    console.log('modifiedLinkData', modifiedLinkData);
-    console.log('removedLinkKeys', removedLinkKeys);
-    console.log('modifiedModelData', modifiedModelData);
     console.log('obj', obj);
 
     // we will update the node data and node link here
@@ -87,7 +83,7 @@ export class StateDiagram extends React.Component<{}, AppState> {
       const nodeDataArray = this.state.nodeDataArray;
       // check if newNode is already in the nodeDataArray
       const isExists = nodeDataArray.find((node) => node.key === newNode.key);
-      if (isExists === undefined) {
+      if (!isExists) {
         nodeDataArray.push(newNode);
       }
       this.setState({ nodeDataArray: nodeDataArray });
@@ -97,7 +93,7 @@ export class StateDiagram extends React.Component<{}, AppState> {
       const linkDataArray = this.state.linkDataArray;
       // check if newLink is already in the linkDataArray
       const isExists = linkDataArray.find((link) => link.key === newLink.key);
-      if (isExists === undefined) {
+      if (!isExists) {
         linkDataArray.push(newLink);
       }
       this.setState({ linkDataArray: linkDataArray });
@@ -119,6 +115,13 @@ export class StateDiagram extends React.Component<{}, AppState> {
   public handleResetDiagramBtn(e: any) {
     this.setState({ modelData: { canRelink: true }, skipsDiagramUpdate: false });
   }
+
+  public saveToJSON(){
+    console.log('click');
+    // call function to save to JSON
+    DiagramHelper.saveDiagramToJSON(this.state.nodeDataArray, this.state.linkDataArray);
+  }
+
   public render() {
     let selKey;
     if (this.state.selectedKey !== null) {
@@ -145,6 +148,7 @@ export class StateDiagram extends React.Component<{}, AppState> {
           </label>
           {selKey}
           <button onClick={this.handleResetDiagramBtn}>Reset Diagram</button>
+          <button onClick={this.saveToJSON}>Save To JSON</button>
         </div>
     );
   }

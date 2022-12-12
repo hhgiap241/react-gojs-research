@@ -1,0 +1,31 @@
+[
+    {
+        "id": "B1",
+        "type": "B",
+        "dependencies": {
+            "type": "LogicalOperator",
+            "operator": "or",
+            "id": "LO1",
+            "elements": [
+                {
+                    "id": "A1",
+                    "type": "Task",
+                    "state": "ok"
+                },
+                {
+                    "id": "A2",
+                    "type": "Task",
+                    "state": "ok"
+                }
+            ]
+        }
+    },
+    {
+        "id": "A1",
+        "type": "A"
+    },
+    {
+        "id": "A2",
+        "type": "A"
+    }
+]
