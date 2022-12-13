@@ -1,0 +1,109 @@
+{
+  "cells": [
+    {
+      "type": "standard.Rectangle",
+      "position": {
+        "x": 75,
+        "y": 0
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      },
+      "angle": 0,
+      "id": "9870d4a1-a59a-46e6-8eba-89a3425a54fc",
+      "z": 1,
+      "attrs": {
+        "body": {
+          "fill": "blue"
+        },
+        "label": {
+          "fill": "white",
+          "text": "Hello"
+        }
+      }
+    },
+    {
+      "type": "standard.Rectangle",
+      "position": {
+        "x": 0,
+        "y": 90
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      },
+      "angle": 0,
+      "id": "decfcd03-a223-490f-a5ff-94bd75538f3b",
+      "z": 1,
+      "attrs": {
+        "body": {
+          "fill": "blue"
+        },
+        "label": {
+          "fill": "white",
+          "text": "World!"
+        }
+      }
+    },
+    {
+      "type": "standard.Rectangle",
+      "position": {
+        "x": 150,
+        "y": 90
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      },
+      "angle": 0,
+      "id": "f5d2c9da-34a4-472c-988e-64d49722b8c7",
+      "z": 1,
+      "attrs": {
+        "body": {
+          "fill": "blue"
+        },
+        "label": {
+          "fill": "white",
+          "text": "World!"
+        }
+      }
+    },
+    {
+      "type": "standard.Link",
+      "source": {
+        "id": "9870d4a1-a59a-46e6-8eba-89a3425a54fc"
+      },
+      "target": {
+        "id": "decfcd03-a223-490f-a5ff-94bd75538f3b"
+      },
+      "id": "f90067ce-1c07-414f-900b-b4c69988e65b",
+      "z": 2,
+      "vertices": [
+        {
+          "x": 50,
+          "y": 65
+        }
+      ],
+      "attrs": {}
+    },
+    {
+      "type": "standard.Link",
+      "source": {
+        "id": "9870d4a1-a59a-46e6-8eba-89a3425a54fc"
+      },
+      "target": {
+        "id": "f5d2c9da-34a4-472c-988e-64d49722b8c7"
+      },
+      "id": "2eec36c2-e334-416c-b696-5f1a8dff8b32",
+      "z": 3,
+      "vertices": [
+        {
+          "x": 200,
+          "y": 65
+        }
+      ],
+      "attrs": {}
+    }
+  ]
+}
