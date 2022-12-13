@@ -32,56 +32,10 @@ const AutoLayout = (): JSX.Element => {
       height: '100%',
       gridSize: 20,
     });
-    paper.on('blank:mousewheel', function(evt, x, y, delta) {
-      evt.preventDefault();
-      const oldscale = paper.scale().sx;
-      const newscale = oldscale + 0.2 * delta * oldscale
 
-      if (newscale>0.2 && newscale<5) {
-        paper.scale(newscale, newscale, 0, 0);
-        // @ts-ignore
-        paper.translate(-x*newscale+evt.offsetX,-y*newscale+evt.offsetY);
-      }
-    });
+
     graphRef.current = graph;
     paperRef.current = paper;
-
-    // var rect = new joint.shapes.standard.Circle();
-    // rect.position(100, 30);
-    // rect.resize(100, 40);
-    // rect.attr({
-    //   body: {
-    //     fill: 'blue'
-    //   },
-    //   label: {
-    //     text: 'Hello',
-    //     fill: 'white'
-    //   }
-    // });
-    // rect.addTo(graph);
-    //
-    // var rect2 = rect.clone();
-    // rect2.translate(300, 0);
-    // rect2.attr('label/text', 'World!');
-    // rect2.addTo(graph);
-    //
-    // var rect3 = rect.clone();
-    // rect3.translate(600, 0);
-    // rect3.attr('label/text', 'World!');
-    // rect3.addTo(graph);
-    //
-    // var link = new joint.shapes.standard.Link();
-    // link.source(rect);
-    // link.target(rect2);
-    // link.addTo(graph);
-    //
-    // var link2 = new joint.shapes.standard.Link();
-    // link2.source(rect);
-    // link2.target(rect3);
-    // link2.addTo(graph);
-
-    // let the graph be horizontally and vertically centered and scaled to fit the viewport
-
 
     joint.layout.DirectedGraph.layout(graph, {
       graphlib: graphlib,
@@ -89,6 +43,7 @@ const AutoLayout = (): JSX.Element => {
     });
 
     paper.unfreeze();
+    InitData.zoompaper(paper);
     canvas.current.appendChild(paper.el);
 
     return () => {

@@ -110,6 +110,7 @@ const zoompaper = (paper: any) => {
     viewportSelector: paper.layers,
     zoomEnabled: true,
     panEnabled: false,
+    fit: false, // important line
     controlIconsEnabled: true,
     maxZoom: 2,
     minZoom: 0.1,
@@ -117,7 +118,6 @@ const zoompaper = (paper: any) => {
       let currentMatrix = paper.matrix();
       console.log(currentMatrix);
       return function onUpdatedCTM(matrix) {
-        console.log(matrix);
         const {a, d, e, f} = matrix;
         const {a: ca, d: cd, e: ce, f: cf} = currentMatrix;
         const translateChanged = (e !== ce || f !== cf)
@@ -133,7 +133,6 @@ const zoompaper = (paper: any) => {
     })()
   });
 
-
   paper.on('blank:pointerdown', function () {
     panZoom.enablePan();
   });
@@ -142,6 +141,7 @@ const zoompaper = (paper: any) => {
     panZoom.disablePan();
   });
 }
+
 
 export {
   graph,

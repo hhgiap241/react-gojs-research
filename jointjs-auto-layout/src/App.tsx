@@ -5,9 +5,9 @@ import AutoLayout from "./components/AutoLayout";
 
 function App() {
   return (
-    <div>
+    <>
       <AutoLayout />
-    </div>
+    </>
   );
 }
 
