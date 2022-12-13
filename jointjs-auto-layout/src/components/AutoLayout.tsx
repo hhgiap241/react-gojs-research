@@ -33,7 +33,6 @@ const AutoLayout = (): JSX.Element => {
       gridSize: 20,
     });
 
-
     graphRef.current = graph;
     paperRef.current = paper;
 

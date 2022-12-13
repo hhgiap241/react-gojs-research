@@ -116,7 +116,6 @@ const zoompaper = (paper: any) => {
     minZoom: 0.1,
     onUpdatedCTM: (function () {
       let currentMatrix = paper.matrix();
-      console.log(currentMatrix);
       return function onUpdatedCTM(matrix) {
         const {a, d, e, f} = matrix;
         const {a: ca, d: cd, e: ce, f: cf} = currentMatrix;
