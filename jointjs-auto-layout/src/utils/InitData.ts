@@ -1,5 +1,6 @@
 import * as joint from 'jointjs';
 import data from '../jsonSrc/graph3.json';
+import svgPanZoom from "svg-pan-zoom";
 
 const graph = new joint.dia.Graph({}, {cellNamespace: joint.shapes});
 
@@ -32,7 +33,6 @@ const addLink = (source: any, target: any, breakpoints: any) => {
 const addMember = (name: string, x: number, y: number, type: string, id: string, size: any) => {
   // @ts-ignore
   const cell = new joint.shapes.standard[type]({
-    // type: type,
     id: id,
     position: {x, y},
     size: size,
@@ -46,44 +46,11 @@ const addMember = (name: string, x: number, y: number, type: string, id: string,
       }
     }
   });
-  // if (type === "standard.Rectangle") {
-  //   cell = new joint.shapes.standard.Rectangle({
-  //     type: type,
-  //     id: id,
-  //     position: {x, y},
-  //     size: size,
-  //     attrs: {
-  //       body: {
-  //         fill: "blue"
-  //       },
-  //       label: {
-  //         fill: "white",
-  //         text: name
-  //       }
-  //     },
-  //   });
-  // } else if (type === "standard.Circle") {
-  //   cell = new joint.shapes.standard.Circle({
-  //     type: type,
-  //     id: id,
-  //     position: {x, y},
-  //     size: size,
-  //     attrs: {
-  //       body: {
-  //         fill: "blue"
-  //       },
-  //       label: {
-  //         fill: "white",
-  //         text: name
-  //       }
-  //     },
-  //   });
-  // }
   graph.addCell(cell);
   return cell;
 }
 const handleLogicalOperatorElements = (elements: object[], parentTask: any) => {
-  console.log(elements);
+  // console.log(elements);
   elements.forEach((element: any) => {
     if (element.type === 'Task') {
       addMember(element.id, 0, 0, "Rectangle", element.id, {
@@ -104,25 +71,24 @@ const handleLogicalOperatorElements = (elements: object[], parentTask: any) => {
 const handleLogicalOperator = (dependency: any, parentTask: any) => {
   const operator = {
     id: dependency.id,
-    operator: dependency.operator
+    name: dependency.operator
   }
   const link = {
     source: operator.id,
     target: parentTask.id,
   }
   // add the operator
-  addMember(operator.id, 0, 0, "Circle", operator.id, {
+  addMember(operator.name, 0, 0, "Circle", operator.id, {
     width: 40,
     height: 40
   });
   addLink(link.source, link.target, []);
-  console.log(dependency.elements);
+  // console.log(dependency.elements);
   handleLogicalOperatorElements(dependency.elements, operator);
 }
 
 const initData = (data: object[]) => {
-  console.log(data);
-  // (name: string, x: number, y: number, type: string, id: string)
+  // console.log(data);
   data.forEach((task: any) => {
     addMember(task.id, 0, 0, "Rectangle", task.id, {
       width: 100,
@@ -139,8 +105,47 @@ const initData = (data: object[]) => {
   }
 }
 
+const zoompaper = (paper: any) => {
+  const panZoom = svgPanZoom(paper.svg, {
+    viewportSelector: paper.layers,
+    zoomEnabled: true,
+    panEnabled: false,
+    controlIconsEnabled: true,
+    maxZoom: 2,
+    minZoom: 0.1,
+    onUpdatedCTM: (function () {
+      let currentMatrix = paper.matrix();
+      console.log(currentMatrix);
+      return function onUpdatedCTM(matrix) {
+        console.log(matrix);
+        const {a, d, e, f} = matrix;
+        const {a: ca, d: cd, e: ce, f: cf} = currentMatrix;
+        const translateChanged = (e !== ce || f !== cf)
+        if (translateChanged) {
+          paper.trigger('translate', e - ce, f - cf);
+        }
+        const scaleChanged = (a !== ca || d !== cd);
+        if (scaleChanged) {
+          paper.trigger('scale', a, d, e, f);
+        }
+        currentMatrix = matrix;
+      }
+    })()
+  });
+
+
+  paper.on('blank:pointerdown', function () {
+    panZoom.enablePan();
+  });
+
+  paper.on('blank:pointerup', function () {
+    panZoom.disablePan();
+  });
+}
+
 export {
   graph,
   paper,
-  initData
+  initData,
+  zoompaper
 }
