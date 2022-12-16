@@ -1,0 +1,95 @@
+[
+    {
+        "id": "A1",
+        "type": "A"
+    },
+    {
+        "id": "B1",
+        "type": "B",
+        "dependencies":
+        {
+            "type": "LogicalOperator",
+            "operator": "or",
+            "id": "LO1",
+            "elements": [
+                {
+                    "type": "Task",
+                    "id": "A1",
+                    "state": "ok"
+                },
+                {
+                    "type": "LogicalOperator",
+                    "operator": "and",
+                    "id": "LO2",
+                    "elements": [
+                        {
+                            "type": "Task",
+                            "id": "A3",
+                            "state": "ok"
+                        },
+                        {
+                            "type": "Task",
+                            "id": "A4",
+                            "state": "ok"
+                        },
+                        {
+                            "type": "Task",
+                            "id": "A5",
+                            "state": "ok"
+                        },
+                        {
+                            "type": "LogicalOperator",
+                            "operator": "xor",
+                            "id": "LO3",
+                            "elements": [
+                                {
+                                    "type": "Task",
+                                    "id": "A6",
+                                    "state": "ok"
+                                },
+                                {
+                                    "type": "Task",
+                                    "id": "A7",
+                                    "state": "ok"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "LogicalOperator",
+                            "operator": "not",
+                            "id": "LO4",
+                            "elements": [
+                                {
+                                    "type": "Task",
+                                    "id": "A8",
+                                    "state": "ok"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "Task",
+                    "id": "A2",
+                    "state": "ok"
+                }
+            ]
+        }
+    },
+    {
+        "id": "A2",
+        "type": "A"
+    },
+    {
+        "id": "A3",
+        "type": "A"
+    },
+    {
+        "id": "A4",
+        "type": "A"
+    },
+    {
+        "id": "A5",
+        "type": "A"
+    }
+]
