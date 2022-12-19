@@ -1,5 +1,5 @@
 import * as joint from 'jointjs';
-import data from '../jsonSrc/graph3.json';
+//import data from '../jsonSrc/graph3.json';
 import svgPanZoom from "svg-pan-zoom";
 
 const graph = new joint.dia.Graph({}, { cellNamespace: joint.shapes });

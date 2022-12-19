@@ -1,12 +1,14 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-import AutoLayout from "./components/AutoLayout";
+//import AutoLayout from "./components/AutoLayout";
+import { JointJsReactComponent, Control } from './components/jointjs-react-component';
 
 function App() {
   return (
     <>
-      <AutoLayout />
+      <JointJsReactComponent >
+        <h1>Helllo</h1>
+        <Control />
+      </JointJsReactComponent>
     </>
   );
 }

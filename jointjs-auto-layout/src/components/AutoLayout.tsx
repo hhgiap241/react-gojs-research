@@ -1,7 +1,7 @@
 import dagre from 'dagre';
 import graphlib from 'graphlib';
 import * as joint from 'jointjs';
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './AutoLayout.css';
 import jsonObject from '../jsonSrc/jointjs_sample.json';
 import * as InitData from '../utils/InitData';
@@ -64,11 +64,11 @@ const AutoLayout = (): JSX.Element => {
   }
 
   return (
-      <>
-        <h1>Auto layout</h1>
-        <div className="canvas" ref={canvas}/>
-        <button onClick={handleAutoLayout}>Auto Layout</button>
-      </>
+    <>
+      <h1>Auto layout</h1>
+      <div className="canvas" ref={canvas} />
+      <button onClick={handleAutoLayout}>Auto Layout</button>
+    </>
   );
 };
 
