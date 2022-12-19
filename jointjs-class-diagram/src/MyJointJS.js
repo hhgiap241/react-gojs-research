@@ -32,13 +32,14 @@ import {  WFShape_BaseColor,
     WFShape_AssignIcon,
     WFShape_SwitchIcon,
     WFShape_ReturnIcon,
-    WFShape_Width,
-    WFShape_Height,
+    WFRectangle_Width,
+    WFRectangle_Height,
     WFShape_RemoveDistance,
     WFShapeMap,
     portsDef,
     WFRect} from './utils/ShapeDefinition.js';
 import * as DiagramHelper from './utils/DiagramHelper.js';
+import {_menuClose, _setElementFromWF} from "./utils/DiagramHelper.js";
 
 let initData = InitData.initData(data);
 class MyJointJS extends React.Component {
@@ -112,11 +113,11 @@ class MyJointJS extends React.Component {
                 console.dir(linkView)
                 console.dir(linkView.model.source())
                 */
-                const source = linkView.model.source()
-                // Cound the number of outgoing links.  Hint ... it will be at least 1 as we have the CURRENT link
-                if (JointJSUtils.countOutgoingLinks(this.model, source.id, source.port) > 1) {
-                    return false;
-                }
+                // const source = linkView.model.source()
+                // // Count the number of outgoing links.  Hint ... it will be at least 1 as we have the CURRENT link
+                // if (JointJSUtils.countOutgoingLinks(this.model, source.id, source.port) > 1) {
+                //     return false;
+                // }
                 return true;
             },
             interactive: function (cellView) {
@@ -176,6 +177,23 @@ class MyJointJS extends React.Component {
 
         DiagramHelper._setLayoutDirection('LR', this.setState); // Set the default layout direction to be LR (Left->Right)
     } // componentDidMount
+
+    /**
+     * Called when the settings OK button has been clicked.
+     * @param {*} wf
+     */
+    _settingsOk(wf) {
+        this.setState({ settingsShowDialog: false });
+        DiagramHelper._setElementFromWF(this.state.menuElement, wf)
+        DiagramHelper._menuClose(this.setState);
+    } // _settingsOk
+
+    _settingsCancel(wf) {
+        this.setState({ settingsShowDialog: false });
+        DiagramHelper._menuClose(this.setState);
+    } // _settingsCancel
+
+
     render() {
         return (<div>
             <AppBar position="static">
@@ -213,7 +231,9 @@ class MyJointJS extends React.Component {
                 }
                 <Button color="primary" variant="contained" onClick={() => DiagramHelper._layout(this.state.layout, this.graph)}>Auto Layout</Button>
                 &nbsp;
-                <Button color="primary" variant="contained" onClick={() => DiagramHelper._add(this.state.stepCount, this.paper, this.graph, this.setState) }>Add Step</Button>
+                <Button color="primary" variant="contained" onClick={() => DiagramHelper._addTask(this.state.stepCount, this.paper, this.graph, this.setState) }>Add Task</Button>
+                &nbsp;
+                <Button color="primary" variant="contained" onClick={() => DiagramHelper._addOperator(this.state.stepCount, this.paper, this.graph, this.setState) }>Add Operator</Button>
                 &nbsp;
                 <Button color="primary" variant="contained" onClick={() => DiagramHelper._buildWF(this.graph, this.setState)}>Build YAML</Button>
                 &nbsp;
@@ -277,14 +297,14 @@ class MyJointJS extends React.Component {
             {/* SETTINGS */}
             <SettingsDialog open={this.state.settingsShowDialog}
                 wf={this.state.wf}
-                onOk={() => DiagramHelper._settingsOk(this.state.wf, this.setState, this.state.menuElement)}
-                onCancel={() => DiagramHelper._settingsCancel(this.state.wf, this.setState)}
+                onOk={this._settingsOk.bind(this)}
+                onCancel={this._settingsCancel.bind(this)}
             />
             <YAMLInputDialog open={this.state.yamlInputShowDialog}
                 onOk={
                     (allYaml) => {
                         this.setState({ yamlInputShowDialog: false });
-                        DiagramHelper._parseWF(allYaml, this.graph, this.paper, this.state.stepCount, this.setState)
+                        DiagramHelper._parseWF(allYaml, this.graph, this.paper, this.state.stepCount, this.setState, this.state.layoutDirection);
                     }
                 }
                 onCancel={

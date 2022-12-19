@@ -56,6 +56,7 @@ class SettingsDialog extends React.Component {
                 </DialogContent>
                 <DialogActions>
                     <Button
+                        // some problem here, the name of the element is not changed
                         onClick={() => {
                             this.props.onOk(this.state.wf);
                         }}

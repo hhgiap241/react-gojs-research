@@ -10,8 +10,10 @@ const WFShape_CallIcon = '\uf0ac';
 const WFShape_AssignIcon = '\uf061';
 const WFShape_SwitchIcon = '\uf047';
 const WFShape_ReturnIcon = '\uf00c';
-const WFShape_Width = 140;
-const WFShape_Height = 70;
+const WFRectangle_Width = 140;
+const WFRectangle_Height = 70;
+const WFCircle_Width = 60;
+const WFCircle_Height = 60;
 const WFShape_RemoveDistance = -30;
 
 const WFShapeMap = {
@@ -82,6 +84,7 @@ const portsDef = {
   items: []
 };
 
+// create a custom element
 const WFRect = joint.dia.Element.define('workflow.Rectangle', {
   attrs: {
     body: {
@@ -112,8 +115,8 @@ const WFRect = joint.dia.Element.define('workflow.Rectangle', {
   }
 }, {
   markup: [{
-    tagName: 'rect',
-    selector: 'body',
+    tagName: 'rect', // the type of element to be created
+    selector: 'body', //  A unique selector for targeting the element within the attr cell attribute.
   }, {
     tagName: 'text',
     selector: 'label'
@@ -121,6 +124,54 @@ const WFRect = joint.dia.Element.define('workflow.Rectangle', {
     tagName: 'text',
     selector: 'icon'
   }]
+});
+
+// create a custom element like WFRect but with circle
+const WFCircle = joint.dia.Element.define('workflow.Circle', {
+  attrs: {
+    body: {
+      refWidth: '100%',
+      refHeight: '100%',
+      strokeWidth: 2,
+      stroke: '#000000',
+      fill: '#FFFFFF',
+      cx: 'calc(0.5*w)',
+      cy: 'calc(0.5*h)',
+      rx: 'calc(0.5*w)',
+      ry: 'calc(0.5*h)',
+    },
+    label: {
+      textVerticalAnchor: 'middle',
+      textAnchor: 'middle',
+      refX: '50%',
+      refY: '50%',
+      fontSize: 14,
+      fill: '#333333'
+    },
+    // icon: {
+    //   text: WFShape_CallIcon,
+    //   fontFamily: 'FontAwesome',
+    //   fontSize: 15,
+    //   textWrap: {
+    //     width: -10
+    //   },
+    //   refX: '5%',
+    //   refY: '7%',
+    // }
+  }
+}, {
+  markup: [{
+    tagName: 'ellipse',
+    selector: 'body',
+  }, {
+    tagName: 'text',
+    selector: 'label'
+  },
+    // {
+    //   tagName: 'text',
+    //   selector: 'icon'
+    // }
+  ]
 });
 
 export {
@@ -131,10 +182,13 @@ export {
   WFShape_AssignIcon,
   WFShape_SwitchIcon,
   WFShape_ReturnIcon,
-  WFShape_Width,
-  WFShape_Height,
+  WFRectangle_Width,
+  WFRectangle_Height,
+  WFCircle_Width,
+  WFCircle_Height,
   WFShape_RemoveDistance,
   WFShapeMap,
   portsDef,
-  WFRect
+  WFRect,
+  WFCircle
 }

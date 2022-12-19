@@ -34,6 +34,7 @@ class Settings extends React.Component {
             valid: false
         };
         if (props.wf) {
+            console.log("Settings: props.wf", props.wf);
             state = this.parseWF(props.wf); // Set the state from the parse of the WF object
             console.dir(this.state);
             delete this.parseFailed;
@@ -331,6 +332,7 @@ class Settings extends React.Component {
                             required
                             onChange={
                                 (e) => {
+                                    console.log("StepName changed", e.target.value);
                                     this.setState({ stepName: e.target.value }, this._settingsChanged)
                                 }
                             }

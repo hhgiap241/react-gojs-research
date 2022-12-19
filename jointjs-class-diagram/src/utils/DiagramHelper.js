@@ -1,8 +1,8 @@
 import {
-  portsDef,
+  portsDef, WFCircle,
   WFRect, WFShape_BaseColor,
-  WFShape_Height, WFShape_RemoveDistance,
-  WFShape_Width, WFShapeMap
+  WFRectangle_Height, WFShape_RemoveDistance,
+  WFRectangle_Width, WFShapeMap, WFCircle_Width, WFCircle_Height
 } from "./ShapeDefinition";
 import clone from "just-clone";
 import WFUtils from "../WFUtils";
@@ -11,17 +11,17 @@ import yaml from "js-yaml";
 import * as dagre from "dagre";
 import graphlib from "graphlib";
 
-function _add(stepCount, paper, graph, setState) {
+function _addTask(stepCount, paper, graph, setState) {
   let stepName = `Step${stepCount}`
   setState({
     stepCount: stepCount + 1,
   });
 
   let rect = new WFRect({
-    ports: portsDef
+    ports: portsDef // get a custom port here
   });
   rect.position(100, 30);
-  rect.resize(WFShape_Width, WFShape_Height);
+  rect.resize(WFRectangle_Width, WFRectangle_Height);
   rect.attr({
     body: {
       fill: WFShape_BaseColor
@@ -31,8 +31,9 @@ function _add(stepCount, paper, graph, setState) {
       fill: 'black'
     },
   });
-  rect.addPort({ group: 'in' });
-  rect.addPort({ group: 'out' });
+  // rect.addPort({ group: 'in', attrs: { circle: {r: 3 } } });
+  rect.addPort({group: 'in'});
+  rect.addPort({group: 'out'});
   rect.addTo(graph);
   rect.set('wf', {
     [stepName]: {
@@ -46,7 +47,7 @@ function _add(stepCount, paper, graph, setState) {
   paper.findViewByModel(rect).on('element:contextmenu', (e) => {
     setState({
       contextShowMenu: true,
-      mouse: { x: e.clientX, y: e.clientY },
+      mouse: {x: e.clientX, y: e.clientY},
       menuElement: rect,
       wf: clone(rect.get('wf'))
     });
@@ -63,7 +64,61 @@ function _add(stepCount, paper, graph, setState) {
     });
   });
   return rect;
-} // _add
+} // _addTask
+
+function _addOperator(stepCount, paper, graph, setState) {
+  let stepName = `Step${stepCount}`
+  setState({
+    stepCount: stepCount + 1,
+  });
+
+  let circle = new WFCircle({
+    ports: portsDef // get a custom port here
+  });
+  circle.position(100, 30);
+  circle.resize(WFCircle_Width, WFCircle_Height);
+  circle.attr({
+    body: {
+      fill: WFShape_BaseColor
+    },
+    label: {
+      text: stepName,
+      fill: 'black'
+    },
+  });
+  circle.addPort({group: 'in', attrs: {circle: {r: 6}}});
+  circle.addPort({group: 'out', attrs: {circle: {r: 6}}});
+  circle.addTo(graph);
+  circle.set('wf', {
+    [stepName]: {
+      'call': ''
+    }
+  });
+
+  /**
+   * Add a handler for the context menu.
+   */
+  paper.findViewByModel(circle).on('element:contextmenu', (e) => {
+    setState({
+      contextShowMenu: true,
+      mouse: {x: e.clientX, y: e.clientY},
+      menuElement: circle,
+      wf: clone(circle.get('wf'))
+    });
+  });
+
+  /*
+   * Add a handler for the settings menu on a double click.
+   */
+  paper.findViewByModel(circle).on('element:pointerdblclick', (e) => {
+    setState({
+      settingsShowDialog: true,
+      menuElement: circle,
+      wf: clone(circle.get('wf'))
+    });
+  });
+  return circle;
+} // _addOperator
 
 function _setLayoutDirection(direction, setState) {
   if (direction === 'LR') {
@@ -79,11 +134,11 @@ function _setLayoutDirection(direction, setState) {
     throw new Error(`Unknown layoutDirection: ${direction}`)
   }
 
-  setState({ layoutDirection: direction });
+  setState({layoutDirection: direction});
 } // _setDirection
 
 function _menuClose(setState) {
-  setState({ contextShowMenu: false });
+  setState({contextShowMenu: false});
 } // _menuClose
 
 function _deleteElement(menuElement, setState) {
@@ -93,12 +148,12 @@ function _deleteElement(menuElement, setState) {
 
 // here
 function _duplicateElement(stepCount, paper, graph, setState, menuElement) {
-  const newElement = _add(stepCount, paper, graph, setState);
+  const newElement = _addTask(stepCount, paper, graph, setState);
   //newElement.set('wf', clone(this.state.menuElement.get('wf')))
   const newWf = clone(menuElement.get('wf'));
   WFUtils.setStepName(newWf, "Copy_" + WFUtils.getStepName(newWf))
   _setElementFromWF(newElement, newWf);
-  _menuClose();
+  _menuClose(setState);
 } // _duplicateElement
 
 function _setElementFromWF(jjsElement, wf) {
@@ -114,7 +169,7 @@ function _setElementFromWF(jjsElement, wf) {
   // * "switch" - As many output ports of type "out-condition" as there are conditions in the switch
   let originalType = WFUtils.getStepType(originalWf);
   if (type !== "switch" && originalType === "switch") {
-    jjsElement.resize(WFShape_Width, WFShape_Height);
+    jjsElement.resize(WFRectangle_Width, WFRectangle_Height);
   }
   if (type === "return" && originalType !== "return") {
     // Need to end up with no output ports of any type
@@ -122,22 +177,27 @@ function _setElementFromWF(jjsElement, wf) {
     jjsElement.removePorts(outPorts);
     outPorts = jjsElement.getGroupPorts("out-condition");
     jjsElement.removePorts(outPorts);
-  } else if (type !== "return" && type !== "switch" && originalType === "return") {
-    jjsElement.addPort({ group: 'out' });
+  } else if (type !== "return" && type !== "switch" && originalType
+      === "return") {
+    jjsElement.addPort({group: 'out'});
   } else if (type === "switch" && originalType !== "switch") {
     // Delete all "out" ports and add condition ports
     const outPorts = jjsElement.getGroupPorts("out");
     jjsElement.removePorts(outPorts);
     const conditions = WFUtils.getConditions(wf);
     conditions.forEach((condition) => {
-      jjsElement.addPort({ id: condition.condition, group: 'out-condition', attrs: { text: { text: condition.condition } } });
+      jjsElement.addPort({
+        id: condition.condition,
+        group: 'out-condition',
+        attrs: {text: {text: condition.condition}}
+      });
     });
-    jjsElement.resize(WFShape_Width, WFShape_Height + 10 * conditions.length);
+    jjsElement.resize(WFRectangle_Width, WFRectangle_Height + 10 * conditions.length);
   } else if (type !== "switch" && originalType === "switch") {
     // Delete all ports and add one normal output port
     const outPorts = jjsElement.getGroupPorts("out-condition");
     jjsElement.removePorts(outPorts);
-    jjsElement.addPort({ group: 'out' });
+    jjsElement.addPort({group: 'out'});
   } else if (type === "switch" && originalType === "switch") {
     // We need to check and see if new ports have been added or old ports removed
     const newConditions = WFUtils.getConditions(wf);
@@ -157,9 +217,14 @@ function _setElementFromWF(jjsElement, wf) {
       const outPorts = jjsElement.getGroupPorts("out-condition");
       jjsElement.removePorts(outPorts);
       newConditions.forEach((condition) => {
-        jjsElement.addPort({ id: condition.condition, group: 'out-condition', attrs: { text: { text: condition.condition } } });
+        jjsElement.addPort({
+          id: condition.condition,
+          group: 'out-condition',
+          attrs: {text: {text: condition.condition}}
+        });
       });
-      jjsElement.resize(WFShape_Width, WFShape_Height + 10 * newConditions.length);
+      jjsElement.resize(WFRectangle_Width,
+          WFRectangle_Height + 10 * newConditions.length);
     }
   }
 }
@@ -168,22 +233,23 @@ function _setElementFromWF(jjsElement, wf) {
  * Called when the settings OK button has been clicked.
  * @param {*} wf
  */
-function _settingsOk(wf, setState, menuElement) {
-  setState({ settingsShowDialog: false });
-  _setElementFromWF(menuElement, wf)
-  _menuClose();
-} // _settingsOk
-
-function _settingsCancel(wf, setState) {
-  setState({ settingsShowDialog: false });
-  _menuClose();
-} // _settingsCancel
+// function _settingsOk(wf, setState, menuElement) {
+//   console.dir(wf);
+//   console.log("menuElement: " + menuElement);
+//   setState({settingsShowDialog: false});
+//   _setElementFromWF(menuElement, wf)
+//   _menuClose(setState);
+// } // _settingsOk
+//
+// function _settingsCancel(wf, setState) {
+//   setState({settingsShowDialog: false});
+//   _menuClose(setState);
+// } // _settingsCancel
 
 function _dumpElement(menuElement) {
   console.dir(menuElement.get('wf'));
   console.dir(menuElement);
 } // _dumpElement
-
 
 function _deleteAll(graph) {
   // Delete all elements
@@ -195,20 +261,22 @@ function _deleteAll(graph) {
  * Given a YAML Object as input, create the correct graph.
  * @param {*} yamlObj
  */
-function _parseWF(yamlObj, graph, paper, stepCount, setState) {
+function _parseWF(yamlObj, graph, paper, stepCount, setState, layoutDirection) {
   const addLink = (source, target) => {
     const link = new joint.shapes.standard.Link();
     link.source(source);
     link.target(target);
     link.addTo(graph);
     const linkView = link.findView(paper);
-    linkView.addTools(new joint.dia.ToolsView({ tools: [new joint.linkTools.Remove({ distance: WFShape_RemoveDistance })] }));
+    linkView.addTools(new joint.dia.ToolsView({
+      tools: [new joint.linkTools.Remove({distance: WFShape_RemoveDistance})]
+    }));
     linkView.hideTools();
   };
-  _deleteAll();
+  _deleteAll(graph);
   // We create an element for each step in the YAML.
   yamlObj.forEach((wp) => {
-    const element = _add(stepCount, paper, graph, setState);
+    const element = _addTask(stepCount, paper, graph, setState);
     _setElementFromWF(element, wp);
   });
   // Now all the elements are in place, we can start wiring them up!
@@ -221,11 +289,12 @@ function _parseWF(yamlObj, graph, paper, stepCount, setState) {
       const targetStepName = content.next;
       console.log(`Create link from ${stepName} to ${targetStepName}`)
       if (targetStepName && targetStepName !== 'end') {
-        const sourceElement = _getElementFromStepName(stepName);
-        const targetElement = _getElementFromStepName(targetStepName);
+        const sourceElement = _getElementFromStepName(stepName, graph);
+        const targetElement = _getElementFromStepName(targetStepName, graph);
         const sourcePort = sourceElement.getGroupPorts("out")[0];
         const targetPort = targetElement.getGroupPorts("in")[0];
-        addLink({ id: sourceElement.id, port: sourcePort.id }, { id: targetElement.id, port: targetPort.id });
+        addLink({id: sourceElement.id, port: sourcePort.id},
+            {id: targetElement.id, port: targetPort.id});
         /*
         const link = new joint.shapes.standard.Link();
         link.source({ id: sourceElement.id, port: sourcePort.id });
@@ -252,16 +321,17 @@ function _parseWF(yamlObj, graph, paper, stepCount, setState) {
           is an array of {condition, next} and use each of the "nexts" as the target
   */
       const conditions = content.switch;
-      const sourceElement = _getElementFromStepName(stepName);
+      const sourceElement = _getElementFromStepName(stepName, graph);
       //console.dir(sourceElement.getGroupPorts("out-condition"));
       conditions.forEach((condition) => {
         const targetStepName = condition.next;
         if (targetStepName) {
           const sourcePortId = condition.condition;
-          const targetElement = _getElementFromStepName(targetStepName);
+          const targetElement = _getElementFromStepName(targetStepName, graph);
           const targetPort = targetElement.getGroupPorts("in")[0];
           //console.log(`Forming switch link from port "${portId}" to ${targetStepName}`);
-          addLink({ id: sourceElement.id, port: sourcePortId }, { id: targetElement.id, port: targetPort.id });
+          addLink({id: sourceElement.id, port: sourcePortId},
+              {id: targetElement.id, port: targetPort.id});
           /*
           const link = new joint.shapes.standard.Link();
           link.source({ id: sourceElement.id, port: sourcePortId });
@@ -275,7 +345,7 @@ function _parseWF(yamlObj, graph, paper, stepCount, setState) {
       });
     } // End ... this is a switch
   });
-  _layout();
+  _layout(layoutDirection, graph);
 }
 
 function _getElementFromStepName(stepName, graph) {
@@ -323,7 +393,7 @@ function _buildWF(graph, setState) {
     } else {
       // It IS a switch!!!  We now need to get all the conditions in the WF and see if they are linked!
       const conditions = WFUtils.getConditions(wf);
-      const connectedLinks = graph.getConnectedLinks(element, { outbound: true });
+      const connectedLinks = graph.getConnectedLinks(element, {outbound: true});
       conditions.forEach((condition) => {
         // Condition is an object that contains {condition, next}
         const conditionLink = connectedLinks.find((link) => {
@@ -343,9 +413,8 @@ function _buildWF(graph, setState) {
   });
   const y = yaml.dump(completeWF);
   console.log(y)
-  setState({ yamlText: y, yamlOutputShowDialog: true })
+  setState({yamlText: y, yamlOutputShowDialog: true})
 } // _buildWF
-
 
 /**
  * Layout the graph.
@@ -368,14 +437,15 @@ function _layout(layoutDirection, graph) {
 } // _layout
 
 export {
-  _add,
+  _addTask,
+  _addOperator,
   _setLayoutDirection,
   _menuClose,
   _deleteElement,
   _duplicateElement,
   _setElementFromWF,
-  _settingsOk,
-  _settingsCancel,
+  // _settingsOk,
+  // _settingsCancel,
   _dumpElement,
   _deleteAll,
   _parseWF,

@@ -30,6 +30,14 @@ const addLink = (source, target, breakpoints) => {
   return cell;
 }
 
+function _addNode(stepCount, paper, graph, setState, node) {
+  let stepName = `Step${stepCount}`;
+  setState({
+    stepCount: stepCount + 1
+  });
+
+}
+
 const addMember = (name, x, y, type, id, size) => {
   // @ts-ignore
   const cell = new joint.shapes.standard[type]({
